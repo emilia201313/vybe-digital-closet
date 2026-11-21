@@ -1,12 +1,66 @@
-# VYBE — Provador virtual com FASHN AI
+# VYBE — Provador virtual com modelo open-source
 
-A página original da aplicação continua em `index.html`. A experiência de provador com IA está em `ai-tryon.html` e a chave do fornecedor é usada apenas pelo endpoint servidor `api/tryon.js`.
+A aplicação web continua em `index.html`. A página `ai-tryon.html` usa o **FASHN VTON v1.5**, modelo open-source executado num serviço Python que controlas. Não precisa da API paga nem de uma chave `FASHN_API_KEY`.
 
-## Configuração e publicação na Vercel
+## Importante: o que é gratuito e o que não é
 
-1. Importa o repositório `emilia201313/vybe-digital-closet` em https://vercel.com/new.
-2. Em **Project Settings → Environment Variables**, adiciona `FASHN_API_KEY` com a chave privada obtida na conta FASHN AI. Não a coloques em ficheiros públicos nem no GitHub.
-3. Faz o deploy do projeto. A Vercel publica a página e a função `/api/tryon` no mesmo domínio.
-4. Abre `https://<domínio-do-projeto>.vercel.app/ai-tryon.html` para experimentar. A página GitHub Pages, por si só, não executa funções de servidor; usa o domínio Vercel para esta funcionalidade.
+O código e os pesos do modelo estão sob a licença Apache 2.0. Não há cobrança por pedido a uma API externa. No entanto, a geração precisa de uma GPU NVIDIA compatível: se já tens uma máquina adequada, podes executá-la nela; alugar uma GPU na nuvem normalmente custa dinheiro. A Vercel/GitHub Pages não fornece GPU para executar o modelo. A página web, por si só, não consegue fazer a geração.
 
-O serviço inclui créditos de teste limitados. Confirma os preços e as condições atuais na página oficial antes de usar em produção. As imagens selecionadas são enviadas ao fornecedor para processamento. A API deste exemplo limita cada imagem a cerca de 5 MB e usa o modelo `tryon-v1.6`. A integração inicial aceita partes de cima, partes de baixo e peças únicas; não inclui calçado.
+## Testar localmente numa máquina com GPU NVIDIA/CUDA
+
+O serviço exige uma máquina Linux ou Windows com controladores NVIDIA/CUDA compatíveis, Python e espaço em disco para os pesos (cerca de 2 GB, além dos componentes descarregados automaticamente). Consulta primeiro o README oficial do modelo para requisitos atualizados: https://github.com/fashn-AI/fashn-vton-1.5
+
+1. Instala Git, Python e os controladores NVIDIA adequados.
+2. Clona o repositório oficial do modelo e instala-o num ambiente virtual, seguindo exatamente as instruções oficiais:
+
+   ```bash
+   git clone https://github.com/fashn-AI/fashn-vton-1.5.git
+   cd fashn-vton-1.5
+   python -m venv .venv
+   ```
+
+   Activa o ambiente virtual antes de continuar. No Windows, usa o comando de ativação indicado pela tua versão de PowerShell; no Linux/macOS, normalmente é `source .venv/bin/activate`.
+
+3. Instala PyTorch com suporte CUDA para a tua versão de CUDA a partir do selector oficial: https://pytorch.org/get-started/locally/ . Depois, instala o modelo e descarrega os pesos:
+
+   ```bash
+   pip install -e .
+   python scripts/download_weights.py --weights-dir ./weights
+   ```
+
+4. Copia a pasta `gpu-api` deste repositório para a pasta `fashn-vton-1.5` que clonaste. A estrutura deve ficar assim:
+
+   ```text
+   fashn-vton-1.5/
+   ├── gpu-api/
+   │   ├── main.py
+   │   └── requirements.txt
+   └── weights/
+   ```
+
+5. No mesmo ambiente virtual, instala as dependências do pequeno servidor e inicia-o:
+
+   ```bash
+   pip install -r gpu-api/requirements.txt
+   uvicorn main:app --app-dir gpu-api --host 127.0.0.1 --port 8000
+   ```
+
+   Deixa esta janela do terminal aberta enquanto usas o provador. A primeira inicialização carrega o modelo para a GPU. Para confirmar que está ligado, abre http://127.0.0.1:8000/health — deve aparecer `"status":"ok"` e o nome da GPU.
+
+6. Para abrir a página web localmente, abre um segundo terminal na pasta deste projeto e executa:
+
+   ```bash
+   python -m http.server 5500
+   ```
+
+   No mesmo computador, abre http://127.0.0.1:5500/ai-tryon.html, escolhe as duas imagens e gera a prova. Usa fotografias tuas ou imagens para as quais tens autorização.
+
+## Usar a página publicada na Vercel
+
+A página publicada na Vercel não consegue aceder ao `127.0.0.1` do teu computador. Para a ligar a uma GPU na Internet, tens de alojar este serviço num servidor com GPU e HTTPS, configurar `VYBE_ALLOWED_ORIGINS` com o domínio da tua página e indicar o URL HTTPS desse servidor na secção **Configuração do servidor local** da página.
+
+**Não exponhas este exemplo diretamente à Internet:** ainda não inclui autenticação, limites por utilizador nem proteção contra abuso. Para um serviço público é necessário acrescentar essas proteções e, geralmente, alugar uma máquina GPU. Uma GPU na nuvem não é garantidamente gratuita.
+
+## Licença e API paga antiga
+
+O modelo FASHN VTON v1.5 está sob licença Apache 2.0 (consulta também as licenças dos componentes incluídos). A integração antiga com a API paga não é utilizada por esta página. Não precisas de criar uma chave API nem de definir `FASHN_API_KEY`.
