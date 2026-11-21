@@ -1,2 +1,3 @@
-# vybe-digital-closet
-VYBE — My Digital Closet
+# VYBE — My Digital Closet
+
+Provador virtual inteligente para guardar e experimentar peças digitalizadas.
