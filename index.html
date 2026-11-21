@@ -18,7 +18,11 @@
   </header>
   <main class="max-w-6xl mx-auto px-4 py-8 sm:py-12">
     <section id="welcome-page" class="min-h-[65vh] grid md:grid-cols-2 gap-10 items-center">
-      <div><p class="text-xs uppercase tracking-[.25em] text-stone-500">O teu estilo, organizado</p><h1 class="serif text-7xl sm:text-8xl leading-[.95] mt-4">VYBE</h1><p class="serif text-2xl sm:text-3xl mt-3 text-stone-700">Uma manhã rápida e eficaz</p><p class="mt-6 text-stone-600 max-w-md leading-relaxed">Organiza roupas e acessórios e combina as peças num look. A VYBE tenta reconhecer automaticamente o tipo de peça na fotografia, sem pedir uma fotografia do corpo nem usar manequins.</p><button onclick="startWardrobe()" class="mt-8 rounded-full bg-stone-900 text-white px-7 py-4 font-medium hover:bg-stone-700">Começar a organizar <span aria-hidden="true">→</span></button><p class="text-xs text-stone-400 mt-4">A análise da fotografia acontece neste navegador. O primeiro carregamento do modelo precisa de Internet.</p></div>
+      <div>
+        <h1 class="serif text-7xl sm:text-8xl leading-[.95]">VYBE</h1>
+        <p class="serif text-2xl sm:text-3xl mt-4 text-stone-700">Uma manhã rápida e eficaz</p>
+        <button onclick="startWardrobe()" class="mt-8 rounded-full bg-stone-900 text-white px-7 py-4 font-medium hover:bg-stone-700">Começar a organizar <span aria-hidden="true">→</span></button>
+      </div>
       <div class="relative min-h-[340px] rounded-[2rem] bg-[#e9e3d9] overflow-hidden p-8 flex items-center justify-center"><div class="absolute w-56 h-72 bg-[#d2bda6] rounded-[45%_45%_20%_20%] rotate-[-12deg] translate-x-[-75px]"></div><div class="absolute w-52 h-64 bg-[#79806a] rounded-[40%_40%_18%_18%] rotate-[10deg] translate-x-[65px] translate-y-[35px]"></div><div class="relative z-10 rounded-2xl bg-white/80 backdrop-blur px-5 py-3 shadow-sm text-sm">Peças tuas. Looks teus.</div></div>
     </section>
     <section id="wardrobe-page" class="hidden">
@@ -52,7 +56,7 @@
   <footer class="border-t border-stone-200 bg-white py-5 text-center text-xs text-stone-400">VYBE • Uma manhã rápida e eficaz</footer>
 <script>
 const STORAGE_KEY='vybe-wardrobe-v2';
-const categoryNames={top:'Parte de cima',bottom:'Parte de baixo',onepiece:'Peça única',shoes:'Sapatos',accessory:'Acessório'};
+const categoryNames={top:'Parte de cima',bottom:'Parte de baixo',onepiece:'Vestido / peça única',shoes:'Sapatos',accessory:'Acessório'};
 const accessoryNames={bag:'Mala / carteira',jewelry:'Bijuteria / joalharia',hat:'Chapéu / boné',belt:'Cinto',scarf:'Lenço / cachecol',glasses:'Óculos',watch:'Relógio',hair:'Acessório de cabelo',other:'Outro acessório'};
 const candidates=[{label:'a t-shirt, blouse, shirt or top',category:'top'},{label:'a sweater or knitted top',category:'top'},{label:'a jacket or coat',category:'top'},{label:'a pair of trousers or jeans',category:'bottom'},{label:'a skirt or shorts',category:'bottom'},{label:'a dress or jumpsuit',category:'onepiece'},{label:'a pair of shoes, boots or sandals',category:'shoes'},{label:'a handbag, purse, backpack or wallet',category:'accessory',type:'bag'},{label:'jewelry such as earrings, necklace, bracelet or ring',category:'accessory',type:'jewelry'},{label:'a hat, cap or beanie',category:'accessory',type:'hat'},{label:'a belt',category:'accessory',type:'belt'},{label:'a scarf or neckerchief',category:'accessory',type:'scarf'},{label:'glasses or sunglasses',category:'accessory',type:'glasses'},{label:'a wristwatch',category:'accessory',type:'watch'},{label:'a hair accessory such as a hairband, clip or scrunchie',category:'accessory',type:'hair'},{label:'another fashion accessory',category:'accessory',type:'other'}];
 let clothes=loadClothes();let selected=new Set();let previewUrl=null;let classifierPromise=null;let latestRecognition=0;let cameraStream=null;
